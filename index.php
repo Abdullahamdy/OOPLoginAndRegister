@@ -2,7 +2,10 @@
 
 
 require_once 'core/init.php';
-DB::getInstance();
-DB::getInstance();
-DB::getInstance();
-DB::getInstance();
+$user = DB::getInstance()->get("users", array('username', '=', 'Abdullah'));
+if (!$user->count()) {
+    echo 'NO User';
+} else {
+        var_dump( $user->first());
+    
+}
