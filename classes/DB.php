@@ -71,7 +71,6 @@ class DB
     public function first()
     {
         return $this->results()[0];
-
     }
     public function get($table, $where)
     {
@@ -82,7 +81,55 @@ class DB
     {
         return $this->action('DELETE', $table, $where);
     }
+    public function insert($table, $fields = array())
+    {
 
+        $keys = array_keys($fields);
+        $values = '';
+        $x = 1;
+        foreach ($fields as $field) {
+            $values .= '?';
+            if ($x < count($fields)) {
+                $values .= ', ';
+            }
+            $x++;
+        }
+
+        $sql = "INSERT INTO users (`" . implode('`,`', $keys) . "`) VALUES ({$values})";
+        if (!$this->query($sql, $fields)->errors()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function update($table, $id, $fields)
+    {
+        $set = "";
+        $x = 1;
+        $fieldValues = [];
+        foreach ($fields as $name => $value) {
+            if($name == 'password'){
+                $value = $this->hashPassword($value); // Corrected function name
+            }
+            $set .= "$name = ?";
+            if ($x < count($fields)) {
+                $set .= ', ';
+            }
+            $fieldValues[] = $value; 
+            $x++;
+        }
+        $sql = "UPDATE  {$table} SET {$set} WHERE id = {$id}";
+        if (!$this->query($sql, $fieldValues)->errors()) {
+            return true;
+        }
+        return false;
+    }
+    public function hashPassword($value) // Corrected function name
+    {
+        $hashing = password_hash($value, PASSWORD_DEFAULT);
+        return $hashing;
+    }
     public function count()
     {
         return $this->_count;
