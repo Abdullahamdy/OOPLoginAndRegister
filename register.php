@@ -2,35 +2,20 @@
 
 require_once 'core/init.php';
 if (Input::exists()) {
-     $validate = new Validate();
-     $Validation = $validate->check($_POST,array(
-        'username'=>array(
-            'required'=>true,
-            'min'=>2,
-            'max'=>20,
-            'unique'=>'users'
-        ),
-        'name'=>array(
-            'required'=>true,
-            'min'=>2,
-            'max'=>50,
-        ),
-        'password'=>array(
-            'required'=>true,
-            'min'=>6,
-        ),
-        'password_again'=>array(
-            'required'=>true,
-            'matches'=>'password'
-        ),
-     ));
-if($Validation->passed()){
-    echo 'passed';
-
-}else{
-    echo 'not passed';
-    print_r($Validation->errors());
-}
+    $validate = new Validate();
+    $Validation = $validate->check($_POST, [
+        'username' => ['required' => true, 'min' => 2, 'max' => 20, 'unique' => 'users'],
+        'name' => ['required' => true, 'min' => 2, 'max' => 50],
+        'password' => ['required' => true, 'min' => 6],
+        'password_confirmation' => ['required' => true, 'matches' => 'password'],
+    ]);
+    if ($Validation->passed()) {
+        echo 'passed';
+    } else {
+        foreach($Validation->errors() as $error){
+            echo "{$error} <br />";
+        }
+    }
 }
 
 
@@ -41,25 +26,22 @@ if($Validation->passed()){
 
 
 
-
-
-
 <form action="" method="post">
     <div class="field">
         <label for="username">Username</label>
-        <input type="text" name="username" id="username" value="" autocomplete="off">
+        <input type="text" name="username" id="username" value="<?php echo escape(Input::get('username')); ?>" autocomplete="off">
     </div>
     <div class="field">
         <label for="password">Choose a Password</label>
-        <input type="password" name="password" id="password" value="">
+        <input type="password" name="password" id="password" value="<?php echo escape(Input::get('password')); ?>">
     </div>
     <div class="field">
-        <label for="password_again">Repeat a Password</label>
-        <input type="password" name="password_again" id="password_again" value="">
+        <label for="password_confirmation">Repeat a Password</label>
+        <input type="password" name="password_confirmation" id="password_comfirmation" value="<?php echo escape(Input::get('password_confirmation')); ?>">
     </div>
     <div class="field">
         <label for="name">Name</label>
-        <input type="text" name="name" id="name" value="">
+        <input type="text" name="name" id="name" value="<?php echo escape(Input::get('name')); ?>">
     </div>
     <input type="submit" value="Register">
 </form>
@@ -112,5 +94,9 @@ if($Validation->passed()){
 
     input[type="submit"]:hover {
         background-color: #45a049;
+    }
+    .error{
+        color: red;
+        font-size: large;
     }
 </style>
